@@ -1,0 +1,114 @@
+<?php
+
+/**
+ * @file better_contextual.module
+ * Improves contextual links.
+ */
+
+/**
+ * Implements hook_init().
+ *
+ * Add stylesheet which forces the style of contextual links not to be
+ * overriden.
+ */
+function better_contextual_init() {
+  if (user_access('access contextual links')) {
+    drupal_add_css(drupal_get_path('module', 'better_contextual') . '/better_contextual.css');
+  }
+}
+
+/**
+ * Implements hook_contextual_links_view_alter().
+ *
+ * Add new contextual links
+ */
+function better_contextual_contextual_links_view_alter(&$element, $items) {
+  if (isset($element['#element']['#entity_type'])) {
+    switch ($element['#element']['#entity_type']) {
+      case 'node':
+        $node = $element['#element']['#node'];
+        // For some reason this is not a valid node, escape.
+        if (!isset($node->nid)) return;
+
+        // Add translation link if content type is translatable.
+        if (module_exists('i18n_node') && i18n_node_type_enabled($node->type)) {
+          $element['#links']['node-translate'] = array(
+            'title' => t('Translate'),
+            'href' => 'node/' . $node->nid . '/translate',
+          );
+        }
+
+        // Add more
+        $node_types = node_type_get_types();
+        if (isset($node_types[$node->type])) {
+          $element['#links']['node-add'] = array(
+            'title' => t('Add new @type', array('@type' => $node_types[$node->type]->name)),
+            'href' => 'node/add/' . $node->type,
+          );
+        }
+        break;
+      case 'taxonomy_term':
+        $term = $element['#element']['#term'];
+        $element['#links']['term-edit'] = array(
+          'title' => t('Edit'),
+          'href' => 'taxonomy/term/' . $term->tid . '/edit',
+        );
+        $element['#links']['term-vocabulary'] = array(
+          'title' => t('List all'),
+          'href' => 'admin/structure/taxonomy/' . $term->vocabulary_machine_name . '/list',
+        );
+        // @TODO translate.
+        break;
+    }
+  }
+  // Remove contextual links from specified blocks.
+  else if (isset($element['#element']['#block'])) {
+    $block = $element['#element']['#block'];
+    $block_id = 'block-' . $block->module . '-' . $block->delta;
+    // @TODO this should be moved to the UI, for now keep it in code.
+    switch($block_id) {
+      case 'block-locale-language_content':
+        unset($element['#links']);
+        break;
+    }
+  }
+  // Add the current path as a return path of the links.
+  $current_path = current_path();
+  if (isset($element['#links'])) {
+    foreach ($element['#links'] as &$link) {
+      $link['query'] = array('destination' => current_path());
+    }
+  }
+}
+
+/**
+ * Implements hook_menu_alter().
+ *
+ * Redefine the node translation link as a context inline link so it appears as
+ * a contextual link.
+ */
+function better_contextual_menu_alter(&$items) {
+  if (isset($items['node/%node/translate'])) {
+    $items['node/%node/translate']['context'] = MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE;
+  }
+}
+
+/**
+ * Implements hook_node_view_alter().
+ *
+ * Add the contextual links also for full node pages.
+ */
+function better_contextual_node_view_alter(&$build) {
+  if (!empty($build['#node']->nid) && !isset($build['#contextual_links'])) {
+    $build['#contextual_links']['node'] = array('node', array($build['#node']->nid));
+  }
+}
+
+/**
+ * Implements hook_taxonomy_term_view_alter().
+ *
+ * Add contextual links to term views.
+ */
+function better_contextual_taxonomy_term_view_alter(&$build) {
+  $build['#contextual_links']['taxonomy_term'] = array('term', array($build['#term']->tid));
+}

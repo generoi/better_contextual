@@ -1,0 +1,5 @@
+name = Better contextual links
+description = Convert tabs into contextual links and provide some extra links.
+dependencies[] = contextual
+package = custom
+core = 7.x

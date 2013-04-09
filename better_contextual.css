@@ -1,0 +1,13 @@
+/* Force styles so not to be overriden by theme */
+div.contextual-links-wrapper {
+  font-size: 13px !important;
+}
+div.contextual-links-wrapper li {
+  margin: 0 !important;
+}
+div.contextual-links-wrapper li a {
+  font-size: 13px !important;
+  color: #000 !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+}
