@@ -61,17 +61,6 @@ function better_contextual_contextual_links_view_alter(&$element, $items) {
         break;
     }
   }
-  // Remove contextual links from specified blocks.
-  else if (isset($element['#element']['#block'])) {
-    $block = $element['#element']['#block'];
-    $block_id = 'block-' . $block->module . '-' . $block->delta;
-    // @TODO this should be moved to the UI, for now keep it in code.
-    switch($block_id) {
-      case 'block-locale-language_content':
-        unset($element['#links']);
-        break;
-    }
-  }
   // Add the current path as a return path of the links.
   $current_path = current_path();
   if (isset($element['#links'])) {

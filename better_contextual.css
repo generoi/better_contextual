@@ -11,3 +11,7 @@ div.contextual-links-wrapper li a {
   line-height: 1 !important;
   text-decoration: none !important;
 }
+/* Views pages might place the contextual link on top of others */
+.page-views #main-content > .contextual-links-wrapper {
+  right: -15px;
+}
