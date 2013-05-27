@@ -1,6 +1,7 @@
 /* Force styles so not to be overriden by theme */
 div.contextual-links-wrapper {
   font-size: 13px !important;
+  background: transparent !important;
 }
 div.contextual-links-wrapper li {
   margin: 0 !important;
