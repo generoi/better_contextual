@@ -6,12 +6,12 @@
  */
 
 /**
- * Implements hook_init().
+ * Implements hook_page_build().
  *
  * Add stylesheet which forces the style of contextual links not to be
  * overriden.
  */
-function better_contextual_init() {
+function better_contextual_page_build(&$page) {
   if (user_access('access contextual links')) {
     drupal_add_css(drupal_get_path('module', 'better_contextual') . '/better_contextual.css');
   }
@@ -100,4 +100,15 @@ function better_contextual_node_view_alter(&$build) {
  */
 function better_contextual_taxonomy_term_view_alter(&$build) {
   $build['#contextual_links']['taxonomy_term'] = array('term', array($build['#term']->tid));
+}
+
+/**
+ * Implements hook_contextual_preprocess_html().
+ */
+function better_contextual_preprocess_html(&$variables) {
+  global $theme_key;
+  // Enable contextual links cross-site
+  if (user_access('contextual links') && $theme_key == variable_get('theme_default')) {
+    $page['#attached']['library'][] = array('contextual', 'contextual-links');
+  }
 }
