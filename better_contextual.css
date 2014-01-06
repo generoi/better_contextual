@@ -11,8 +11,13 @@ div.contextual-links-wrapper li a {
   color: #000 !important;
   line-height: 1 !important;
   text-decoration: none !important;
+  font-family: Arial, sans-serif !important;
+  font-weight: normal !important;
 }
-/* Views pages might place the contextual link on top of others */
-.page-views #main-content > .contextual-links-wrapper {
+/* Offset nested contextual links */
+.contextual-links-region .contextual-links-region .context-links-wrapper {
   right: -15px;
+}
+.contextual-links-region .contextual-links-region .contextual-links-region .context-links-wrapper {
+  right: -30px;
 }
