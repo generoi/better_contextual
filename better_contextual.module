@@ -25,8 +25,8 @@ function better_contextual_page_build(&$page) {
  */
 function better_contextual_menu_alter(&$items) {
   foreach ($items as $path => $item) {
-    // Skip items which should never be viisble, such as the /view.
-    if ($item['context'] === MENU_CONTEXT_NONE) {
+    // Skip items which should never be visible, such as the /view.
+    if (isset($item['context']) && $item['context'] === MENU_CONTEXT_NONE) {
       continue;
     }
     // Set all node/term/block menu items to be visible on page and inline
