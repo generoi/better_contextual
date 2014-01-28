@@ -15,9 +15,14 @@ div.contextual-links-wrapper li a {
   font-weight: normal !important;
 }
 /* Offset nested contextual links */
-.contextual-links-region .contextual-links-region .context-links-wrapper {
+.contextual-links-region .contextual-links-region .contextual-links-wrapper {
   right: -15px;
 }
-.contextual-links-region .contextual-links-region .contextual-links-region .context-links-wrapper {
+.contextual-links-region .contextual-links-region .contextual-links-region .contextual-links-wrapper {
   right: -30px;
+}
+/* Revert core patch breaking nested contextual links */
+/* @see http://drupalcode.org/project/drupal.git/commitdiff/c2a570914a0c259d7d9d34776b25788c01be5ab1?hp=af8d800579001b3928b4fa90f90ea5efe2785dcb */
+.contextual-links-region:hover a.contextual-links-trigger {
+  display: block;
 }

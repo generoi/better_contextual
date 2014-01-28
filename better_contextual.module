@@ -14,6 +14,7 @@
 function better_contextual_page_build(&$page) {
   if (user_access('access contextual links')) {
     drupal_add_css(drupal_get_path('module', 'better_contextual') . '/better_contextual.css');
+    drupal_add_js(drupal_get_path('module', 'better_contextual') . '/better_contextual.js');
   }
 }
 
