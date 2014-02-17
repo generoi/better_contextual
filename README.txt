@@ -10,3 +10,8 @@ This module improves the contextual module from Drupal core in a few ways.
 - Moves all entity tabs into the contextual menu
 - Tighten styling so not overriden by theme.
 - @TODO Remove contextual links from specified blocks
+
+Installation
+------------
+1. Enable
+2. It just works.
