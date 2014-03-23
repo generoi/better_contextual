@@ -26,3 +26,7 @@ div.contextual-links-wrapper li a {
 .contextual-links-region:hover a.contextual-links-trigger {
   display: block;
 }
+/* Always display contextual links gear on touch devices */
+.touch .contextual-links-trigger {
+  display: block;
+}
