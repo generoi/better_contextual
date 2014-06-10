@@ -32,7 +32,7 @@ function better_contextual_menu_alter(&$items) {
     }
     // Set all node/term/block menu items to be visible on page and inline
     // displays.
-    if (preg_match('/^(node\/%node|taxonomy\/term\/%taxonomy_term|block\/%bean_delta)\//', $path)) {
+    if (preg_match('/^(node\/%node|taxonomy\/term\/%taxonomy_term|block\/%bean_delta|user\/%user)\//', $path)) {
       $items[$path]['context'] = MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE;
     }
   }
@@ -47,6 +47,12 @@ function better_contextual_menu_alter(&$items) {
 function better_contextual_node_view_alter(&$build) {
   if (!empty($build['#node']->nid) && !isset($build['#contextual_links'])) {
     $build['#contextual_links']['node'] = array('node', array($build['#node']->nid));
+  }
+}
+
+function better_contextual_user_view_alter(&$build) {
+  if (!empty($build['#account']->uid) && !isset($build['#contextual_links'])) {
+    $build['#contextual_links']['user'] = array('user', array($build['#account']->uid));
   }
 }
 
