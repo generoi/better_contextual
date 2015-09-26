@@ -42,7 +42,6 @@ function better_contextual_menu_alter(&$items) {
  * Implements hook_node_view_alter().
  *
  * Add the contextual links also for full node pages.
- * @see contextual_pre_render_links().
  */
 function better_contextual_node_view_alter(&$build) {
   if (!empty($build['#node']->nid) && !isset($build['#contextual_links'])) {
@@ -50,6 +49,11 @@ function better_contextual_node_view_alter(&$build) {
   }
 }
 
+/**
+ * Implements hook_user_view_alter().
+ *
+ * Add the contextual links also for full user pages.
+ */
 function better_contextual_user_view_alter(&$build) {
   if (!empty($build['#account']->uid) && !isset($build['#contextual_links'])) {
     $build['#contextual_links']['user'] = array('user', array($build['#account']->uid));
@@ -60,10 +64,22 @@ function better_contextual_user_view_alter(&$build) {
  * Implements hook_taxonomy_term_view_alter().
  *
  * Add contextual links to term views.
- * @see contextual_pre_render_links().
  */
 function better_contextual_taxonomy_term_view_alter(&$build) {
   $build['#contextual_links']['taxonomy'] = array('taxonomy/term', array($build['#term']->tid));
+}
+
+/**
+ * Implements hook_block_view_alter().
+ */
+function better_contextual_block_view_alter(&$build, $block) {
+  switch ($block->module) {
+    case 'bean':
+      // Bean module sets a trailing edit argument which removes the actual
+      // link to edit.
+      $build['content']['#contextual_links']['bean'] = array('block', array($block->delta));
+      break;
+  }
 }
 
 /**
