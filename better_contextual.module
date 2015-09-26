@@ -92,3 +92,58 @@ function better_contextual_preprocess_html(&$variables) {
     $page['#attached']['library'][] = array('contextual', 'contextual-links');
   }
 }
+
+/**
+ * Implements hook_ctools_plugin_pre_alter().
+ *
+ * Set a custom contextual links callback for panels task handler.
+ */
+function better_contextual_ctools_plugin_pre_alter(&$plugin, &$info) {
+  if (!empty($info['type']) && $info['type'] == 'task_handlers' && $plugin['name'] == 'panel_context') {
+    $plugin['contextual link'] = 'better_contextual_panels_contextual_links';
+  }
+}
+
+/**
+ * Callback; Populate the ctools printed contextual links with the default
+ * contextual links associated with the tasks entity type.
+ *
+ * @see ctools_context_handler_render_handler().
+ * @see contextual_pre_render_links().
+ */
+function better_contextual_panels_contextual_links($handler, $plugin, $contexts, $args) {
+  // Get the default contextual link. In this case the "Edit panel" link.
+  $links = ctools_task_handler_default_contextual_link($handler, $plugin, $contexts, $args);
+  // Replicate how contextual links are rendered normally so we can have
+  // all the hooks invoked in the process.
+  $default_links = array();
+  $element = array(
+    '#contextual_links' => array(),
+    '#element' => array(),
+  );
+  switch ($handler->task) {
+    case 'term_view':
+      $element['#contextual_links'] = array('taxonomy' => array('taxonomy/term', array($args[0])));
+      $element['#element']['#entity_type'] = 'taxonomy_term';
+      $element['#element']['#term'] = taxonomy_term_load($args[0]);
+      $default_links = contextual_pre_render_links($element);
+      break;
+    case 'user_view':
+      $element['#contextual_links'] = array('user' => array('user', array($args[0])));
+      $element['#element']['#entity_type'] = 'user';
+      $element['#element']['#user'] = user_load($args[0]);
+      $default_links = contextual_pre_render_links($element);
+      break;
+    case 'node_view':
+      $element['#contextual_links'] = array('node' => array('node', array($args[0])));
+      $element['#element']['#entity_type'] = 'node';
+      $element['#element']['#node'] = node_load($args[0]);
+      $default_links = contextual_pre_render_links($element);
+      break;
+  }
+
+  if (!empty($default_links['#links'])) {
+    $links += $default_links['#links'];
+  }
+  return $links;
+}
