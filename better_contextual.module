@@ -147,3 +147,98 @@ function better_contextual_panels_contextual_links($handler, $plugin, $contexts,
   }
   return $links;
 }
+
+/**
+ * Implements hook_contextual_links_view_alter().
+ *
+ * Provide more specific link naming now that there are more links available.
+ */
+function better_contextual_contextual_links_view_alter(&$element, $items) {
+  $names = array(
+    'block' => t('block'),
+    'bean' => t('block'),
+    'taxonomy_term' => t('term'),
+    'node' => t('node'),
+    'file' => t('file'),
+  );
+  foreach ($element['#links'] as $key => &$link) {
+    switch ($key) {
+      case 'block-configure':
+        $link['title'] = t('Configure @type', array('@type' => t('block')));
+        break;
+      case 'menu-edit':
+      case 'menu-block-edit':
+        $link['title'] = t('Configure @type', array('@type' => t('menu')));
+        break;
+      case 'menu-list':
+      case 'menu-block-list':
+        $link['title'] = t('Edit @type', array('@type' => t('menu')));
+        break;
+      case 'node-display':
+      case 'taxonomy-display':
+        $entity_type = $element['#element']['#entity_type'];
+        $link['title'] = t('Manage @type display', array('@type' => $names[$entity_type]));
+        break;
+      case 'manage-display':
+        $link['title'] = t('Manage @type display', array('@type' => t('view mode')));
+        break;
+      case 'user-view':
+      case 'node-view':
+      case 'file-view':
+      case 'taxonomy-view':
+        $entity_type = $element['#element']['#entity_type'];
+        $key = $entity_type == 'taxonomy_term' ? '#term' : '#' . $entity_type;
+
+        if (isset($element['#element'][$key]) && is_object($element['#element'][$key])) {
+          $entity = $element['#element'][$key];
+          $label = entity_label($entity_type, $entity);
+          $link['title'] = t('View @name', array('@name' => mb_strimwidth($label, 0, 20, '…')));
+        }
+        break;
+      case 'user-edit':
+      case 'node-edit':
+      case 'file-edit':
+      case 'taxonomy-edit':
+        $entity_type = $element['#element']['#entity_type'];
+        $link['title'] = t('Edit @type', array('@type' => $names[$entity_type]));
+        break;
+      case 'user-delete':
+      case 'node-delete':
+      case 'file-delete':
+      case 'taxonomy-delete':
+        $entity_type = $element['#element']['#entity_type'];
+        $link['title'] = t('Delete @type', array('@type' => $names[$entity_type]));
+        break;
+      case 'user-translate':
+      case 'node-translate':
+      case 'file-translate':
+      case 'taxonomy-translate':
+        $entity_type = $element['#element']['#entity_type'];
+        $link['title'] = t('Translate @type', array('@type' => $names[$entity_type]));
+        break;
+      case 'bean-edit':
+        $link['title'] = t('Edit @type', array('@type' => $names['bean']));
+        break;
+      case 'bean-delete':
+        $link['title'] = t('Delete @type', array('@type' => $names['bean']));
+        break;
+      case 'bean-translate':
+        $link['title'] = t('Translate @type', array('@type' => $names['bean']));
+        break;
+      case 'bean-revisions':
+        unset($element['#links'][$key]);
+        break;
+    }
+  }
+}
+
+/**
+ * Implements hook_module_implements_alter().
+ */
+function better_contextual_module_implements_alter(&$implementations, $hook) {
+  if ($hook == 'contextual_links_view_alter') {
+    $group = $implementations['better_contextual'];
+    unset($implementations['better_contextual']);
+    $implementations['better_contextual'] = $group;
+  }
+}
