@@ -3,9 +3,17 @@ div.contextual-links-wrapper {
   font-size: 13px !important;
   background: transparent !important;
 }
-div.contextual-links-wrapper li {
+div.contextual-links-wrapper ul.contextual-links {
   margin: 0 !important;
+  width: auto !important;
+  text-align: left !important;
 }
+
+div.contextual-links-wrapper li:before,
+div.contextual-links-wrapper li:after,
+div.contextual-links-wrapper li a:before,
+div.contextual-links-wrapper li a:after { display: none !important; }
+
 div.contextual-links-wrapper li a {
   font-size: 13px !important;
   color: #000 !important;
