@@ -114,6 +114,9 @@ function better_contextual_ctools_plugin_pre_alter(&$plugin, &$info) {
 function better_contextual_panels_contextual_links($handler, $plugin, $contexts, $args) {
   // Get the default contextual link. In this case the "Edit panel" link.
   $links = ctools_task_handler_default_contextual_link($handler, $plugin, $contexts, $args);
+  if (empty($links)) {
+    $links = array();
+  }
   // Replicate how contextual links are rendered normally so we can have
   // all the hooks invoked in the process.
   $default_links = array();
